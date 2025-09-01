@@ -2,10 +2,15 @@ import {handleAdminCheckBox} from "./util.js";
 
 const socket = io();
 let session;
+socket.on('alert', (msg) => {
+    alert(msg);
+    location.reload();
+});
 socket.on("sessionData", (sessionData) => {
     session = sessionData;
     if (session.username) {
         document.getElementById("preLogin").style.display = 'none';
+        document.getElementById('logoutBtn').style.display = '';
         if (session.isAdmin) {
             document.getElementById('adminInfo').style.display = "block";
             document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${session.teamId}`;
@@ -43,6 +48,7 @@ socket.on('votes-update', (stories) => {
     }
 });
 socket.on('storyAdded', (stories) => {
+    document.getElementById('estimationContainer').style.display = '';
     const currentStory = stories.find(story => story.isCurrent);
     document.getElementById('currentStoryTitle').innerText = currentStory.title;
 });
@@ -75,12 +81,6 @@ document.getElementById('submitBtn').addEventListener('click', () => {
         }
     }
     socket.emit('join-team', {teamId, username, isAdmin});
-    document.getElementById('logoutBtn').style.display = "";
-    if (isAdmin) {
-        document.getElementById('logoutBtn').innerText = "Delete Team and Logout";
-        document.getElementById('estimationForm').style.display = '';
-    }
-    document.getElementById('preLogin').style.display = "none";
 });
 
 document.getElementById('startEstimationBtn').addEventListener('click', () => {

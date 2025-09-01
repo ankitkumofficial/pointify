@@ -12,10 +12,10 @@
   },
   "license": "ISC",
   "author": "Ankit Kumar",
-  "type": "commonjs",
-  "main": "index.js",
+  "type": "module",
+  "main": "pointify.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node pointify.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

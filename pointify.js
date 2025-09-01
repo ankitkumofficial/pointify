@@ -1,9 +1,16 @@
-const express = require('express');
-const path = require('path');
-const http = require('http');
-const {Server} = require('socket.io');
-const session = require('express-session');
-const FileStore = require("session-file-store")(session);
+import express from 'express';
+import path from 'path';
+import http from 'http';
+import {Server} from 'socket.io';
+import session from 'express-session';
+import FileStorePkg from 'session-file-store';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+import {readDb, saveDb, teamIdNotExists, usernameNotAvailable} from "./util.js";
+
+const FileStore = FileStorePkg(session);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,35 +35,46 @@ io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
 });
 
-const db = new Map();
+const appData = new Map(Object.entries(readDb()));
 
 io.on('connection', (socket) => {
     console.log(`Socket connected`, socket.request.session);
     socket.emit("sessionData", socket.request.session);
     if (socket.request.session.teamId) {
         socket.join(socket.request.session.teamId);
-        socket.emit('votes-update', db.get(socket.request.session.teamId));
+        socket.emit('votes-update', appData.get(socket.request.session.teamId));
     }
-    socket.on('join-team', (data) => {
-        console.log(`${data.username} (${data.isAdmin ? "Admin" : "User"}) from ${data.teamId} connected`);
-        socket.request.session.username = data.username;
-        socket.request.session.teamId = `${data.teamId}`;
-        socket.request.session.isAdmin = data.isAdmin;
+    socket.on('join-team', (userData) => {
+        console.log(`${userData.username} (${userData.isAdmin ? "Admin" : "User"}) from ${userData.teamId} connected`);
+        if (teamIdNotExists(appData, userData)) {
+            socket.emit('alert', "Team Id does not exist.");
+            return;
+        }
+        if (usernameNotAvailable(appData, userData)) {
+            socket.emit('alert', "Username is not available.");
+            return;
+        }
+        socket.request.session.username = userData.username;
+        socket.request.session.teamId = `${userData.teamId}`;
+        socket.request.session.isAdmin = userData.isAdmin;
         socket.request.session.save(err => {
             if (err) console.log(err);
         });
         if (socket.request.session.isAdmin) {
-            db.set(socket.request.session.teamId, []);
+            appData.set(socket.request.session.teamId, []);
+            saveDb(appData);
         }
         socket.join(socket.request.session.teamId);
-        socket.emit('votes-update', db.get(socket.request.session.teamId));
+        socket.emit("sessionData", socket.request.session);
+        socket.emit('votes-update', appData.get(socket.request.session.teamId));
     });
 
     socket.on('vote', (value) => {
         if (socket.request.session.username) {
-            db.get(socket.request.session.teamId).find(story => story.isCurrent)
+            appData.get(socket.request.session.teamId).find(story => story.isCurrent)
                 .votes[socket.request.session.username] = +value;
-            io.to(socket.request.session.teamId).emit('votes-update', db.get(socket.request.session.teamId));
+            saveDb(appData);
+            io.to(socket.request.session.teamId).emit('votes-update', appData.get(socket.request.session.teamId));
         } else {
             console.error(`User is not logged in`);
         }
@@ -64,20 +82,21 @@ io.on('connection', (socket) => {
 
     socket.on('addStory', (storyTitle) => {
         if (socket.request.session.isAdmin) {
-            db.get(socket.request.session.teamId).push({
+            appData.get(socket.request.session.teamId).push({
                 title: storyTitle,
                 votes: {},
                 isCurrent: true,
                 average: undefined,
                 final: undefined
             });
-            io.to(socket.request.session.teamId).emit('storyAdded', db.get(socket.request.session.teamId));
+            saveDb(appData);
+            io.to(socket.request.session.teamId).emit('storyAdded', appData.get(socket.request.session.teamId));
         }
     });
 
     socket.on('logout', () => {
         if (socket.request.session.isAdmin) {
-            db.delete(socket.request.session.teamId);
+            appData.delete(socket.request.session.teamId);
             io.to(socket.request.session.teamId).emit('logout', {});
         }
         delete socket.request.session.username;
