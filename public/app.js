@@ -28,17 +28,31 @@ socket.on('logout', () => {
         document.getElementById('logoutBtn').click();
     }
 });
+socket.on('users-update', (users) => {
+    if (users && users.length > 0) {
+        document.getElementById('usersContainer').style.display = '';
+        const ulUsers = document.getElementById('users');
+        ulUsers.innerHTML = '';
+        for (let i in users) {
+            const li = document.createElement('li');
+            li.textContent = `${users[i]} is online`;
+            li.style.setProperty("--bullet-color", "green");
+            li.style.setProperty("--bullet-size", "1.25em");
+            ulUsers.appendChild(li);
+        }
+    }
+});
 socket.on('votes-update', (stories) => {
     const currentStory = stories?.find(story => story.isCurrent);
     if (currentStory) {
         document.getElementById('estimationContainer').style.display = '';
         document.getElementById('currentStoryTitle').innerText = currentStory.title;
-        const ul = document.getElementById('votes');
-        ul.innerHTML = '';
+        const ulVotes = document.getElementById('votes');
+        ulVotes.innerHTML = '';
         for (let username in currentStory?.votes) {
             const li = document.createElement('li');
             li.textContent = `${username}: ${currentStory.votes[username]}`;
-            ul.appendChild(li);
+            ulVotes.appendChild(li);
         }
         if (session.isAdmin) {
             document.getElementById('estimationForm').style.display = 'none';
@@ -70,7 +84,6 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     }
     const isAdmin = document.getElementById('isAdminInput').checked;
     if (isAdmin) {
-        teamId = Math.floor(1000 + Math.random() * 9000);
         document.getElementById('adminInfo').style.display = "block";
         document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${teamId}`;
     } else {

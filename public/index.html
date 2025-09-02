@@ -18,6 +18,11 @@
             padding: 20px;
         }
 
+        ul li::marker {
+            color: var(--bullet-color, black);
+            font-size: var(--bullet-size, 1em);
+        }
+
         /* ====== Glass Container ====== */
         .glass {
             position: relative;
@@ -121,8 +126,14 @@
     <div id="estimationForm" style="display: none">
         <label for="storyTitleInput">Enter the title of current story:</label>
         <textarea id="storyTitleInput" rows="2" style="display: block; width: 80%; padding: 15px;"></textarea>
-        <br><button id="startEstimationBtn">Start Estimation</button>
-    </div><br>
+        <br>
+        <button id="startEstimationBtn">Start Estimation</button>
+    </div>
+    <br>
+
+    <div id="usersContainer" style="display: none">
+        <ul id="users"></ul>
+    </div>
 
     <div id="estimationContainer" style="display: none">
         <div id="currentStoryTitle"></div>
@@ -133,7 +144,8 @@
             <button onclick="sendVote(5)">5</button>
             <button onclick="sendVote(8)">8</button>
             <button onclick="sendVote(13)">13</button>
-            <br><br><h2>Votes:</h2>
+            <br><br>
+            <h2>Estimation:</h2>
             <ul id="votes"></ul>
         </div>
     </div>
