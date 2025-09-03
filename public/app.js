@@ -48,10 +48,11 @@ socket.on('votes-update', (stories) => {
         document.getElementById('estimationContainer').style.display = '';
         document.getElementById('currentStoryTitle').innerText = currentStory.title;
         const ulVotes = document.getElementById('votes');
+        ulVotes.style.listStyle = 'none';
         ulVotes.innerHTML = '';
         for (let username in currentStory?.votes) {
             const li = document.createElement('li');
-            li.textContent = `${username}: ${currentStory.votes[username]}`;
+            li.textContent = `✅ ${username} has voted `;
             ulVotes.appendChild(li);
         }
         if (session.isAdmin) {

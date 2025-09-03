@@ -6,7 +6,7 @@ import session from 'express-session';
 import FileStorePkg from 'session-file-store';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
-import {readDb, saveDb, usernameExists} from "./util.js";
+import {addUser, initUser, readDb, removeUser, saveDb, usernameExists} from "./util.js";
 
 const FileStore = FileStorePkg(session);
 const __filename = fileURLToPath(import.meta.url);
@@ -38,14 +38,11 @@ io.use((socket, next) => {
 const appData = new Map(Object.entries(readDb()));
 
 io.on('connection', (socket) => {
-    if (socket.request.session.username) {
+    if (socket.request.session.teamId && appData.get(socket.request.session.teamId)) {
         console.log(`${socket.request.session.username} from ${socket.request.session.teamId} has connected`);
-    }
-    socket.emit("sessionData", socket.request.session);
-    if (socket.request.session.teamId) {
-        socket.join(socket.request.session.teamId);
-        socket.emit('votes-update', appData.get(socket.request.session.teamId)?.stories);
-        socket.emit('users-update', appData.get(socket.request.session.teamId)?.users);
+        addUser(socket, appData);
+        io.to(socket.request.session.teamId).emit('users-update', appData.get(socket.request.session.teamId)?.users);
+        initUser(socket, appData);
     }
     socket.on('join-team', (userData) => {
         if (userData.isAdmin) {
@@ -77,17 +74,20 @@ io.on('connection', (socket) => {
         socket.request.session.teamId = `${userData.teamId}`;
         socket.request.session.isAdmin = userData.isAdmin;
         socket.request.session.save(err => {
-            if (err) console.log(err);
+            if (err) {
+                console.log('Error in saving session', err);
+            }
         });
         if (socket.request.session.isAdmin) {
-            appData.set(socket.request.session.teamId, {users: [socket.request.session.username], stories: []});
-        } else {
-            appData.get(socket.request.session.teamId).users.push(socket.request.session.username);
+            appData.set(socket.request.session.teamId, {users: [], stories: []});
         }
-        socket.join(socket.request.session.teamId);
-        io.to(socket.request.session.teamId).emit('refresh');
+        addUser(socket, appData);
+        io.to(socket.request.session.teamId).emit('users-update', appData.get(socket.request.session.teamId)?.users);
         console.log(`${userData.username} has joined ${userData.teamId}`);
-        saveDb(appData);
+        initUser(socket, appData);
+        if (socket.request.session.isAdmin) {
+            saveDb(appData);
+        }
     });
 
     socket.on('vote', (value) => {
@@ -125,11 +125,10 @@ io.on('connection', (socket) => {
             appData.delete(socket.request.session.teamId);
             io.to(socket.request.session.teamId).emit('logout');
         } else {
-            const userIndex = appData.get(socket.request.session.teamId)?.users.indexOf(socket.request.session.username);
-            appData.get(socket.request.session.teamId)?.users.splice(userIndex, 1);
-            delete appData.get(socket.request.session.teamId)?.stories.find(story => story.isCurrent)?.votes[socket.request.session.username];
+            removeUser(socket, appData);
         }
         const teamId = socket.request.session.teamId;
+        const isAdmin = socket.request.session.isAdmin;
         delete socket.request.session.username;
         delete socket.request.session.teamId;
         delete socket.request.session.isAdmin;
@@ -137,13 +136,17 @@ io.on('connection', (socket) => {
             if (err) console.log(err);
         });
         socket.emit('refresh');
-        io.to(teamId).emit('refresh');
-        saveDb(appData);
+        io.to(teamId).emit('users-update', appData.get(teamId)?.users);
+        if (isAdmin) {
+            saveDb(appData);
+        }
     });
 
     socket.on('disconnect', () => {
         if (socket.request.session.username) {
             console.log(`${socket.request.session.username} from ${socket.request.session.teamId} has disconnected`);
+            removeUser(socket, appData);
+            io.to(socket.request.session.teamId).emit('users-update', appData.get(socket.request.session.teamId)?.users);
         }
     });
 });

@@ -103,7 +103,7 @@
 <body>
 <div class="glass">
     <h1>Lets Pointify!</h1>
-    <button id="logoutBtn">Logout</button>
+    <button id="logoutBtn" style="display: none">Logout</button>
     <div id="preLogin">
         <label for="nameInput">Name: </label>
         <input type="text" id="nameInput">
@@ -135,8 +135,12 @@
         <ul id="users"></ul>
     </div>
 
+    <br>
+
     <div id="estimationContainer" style="display: none">
+        <b>Estimating for:</b>
         <div id="currentStoryTitle"></div>
+        <br>
         <div>
             <button onclick="sendVote(1)">1</button>
             <button onclick="sendVote(2)">2</button>
