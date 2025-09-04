@@ -6,7 +6,16 @@ import session from 'express-session';
 import FileStorePkg from 'session-file-store';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
-import {addUser, initUser, readDb, removeUser, saveDb, usernameExists} from "./util.js";
+import {
+    addUser,
+    initUser,
+    removeSession,
+    readDb,
+    removeUser,
+    removeUserByTeamIdAndUsername,
+    saveDb,
+    usernameExists
+} from "./util.js";
 
 const FileStore = FileStorePkg(session);
 const __filename = fileURLToPath(import.meta.url);
@@ -115,6 +124,22 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('removeUser', (username) => {
+        const teamId = socket.request.session.teamId;
+        if (socket.request.session.isAdmin && teamId) {
+            removeUserByTeamIdAndUsername(teamId, username, appData);
+            io.in(teamId).fetchSockets().then((sockets) => {
+                sockets.forEach(socketObj => {
+                    if (socketObj.request.session.username === username) {
+                        removeSession(socketObj);
+                    }
+                });
+            });
+            console.log(`${username} has been removed by admin`);
+            io.to(teamId).emit('users-update', appData.get(teamId).users);
+        }
+    });
+
     socket.on('logout', () => {
         if (!socket.request.session.username) {
             socket.emit('alert', 'User is not logged in');
@@ -129,13 +154,7 @@ io.on('connection', (socket) => {
         }
         const teamId = socket.request.session.teamId;
         const isAdmin = socket.request.session.isAdmin;
-        delete socket.request.session.username;
-        delete socket.request.session.teamId;
-        delete socket.request.session.isAdmin;
-        socket.request.session.save(err => {
-            if (err) console.log(err);
-        });
-        socket.emit('refresh');
+        removeSession(socket);
         io.to(teamId).emit('users-update', appData.get(teamId)?.users);
         if (isAdmin) {
             saveDb(appData);

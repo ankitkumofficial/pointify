@@ -35,9 +35,16 @@ socket.on('users-update', (users) => {
         ulUsers.innerHTML = '';
         for (let i in users) {
             const li = document.createElement('li');
-            li.textContent = `${users[i]} is online`;
             li.style.setProperty("--bullet-color", "green");
             li.style.setProperty("--bullet-size", "1.25em");
+            li.appendChild(document.createTextNode(`${users[i]} is online`));
+            if (session.isAdmin && session.username !== users[i]) {
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.addEventListener('click', () => socket.emit('removeUser', users[i]));
+                removeButton.style.marginLeft = '20px';
+                li.appendChild(removeButton);
+            }
             ulUsers.appendChild(li);
         }
     }
