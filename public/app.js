@@ -8,20 +8,9 @@ socket.on('alert', (msg) => {
 });
 socket.on("sessionData", (sessionData) => {
     session = sessionData;
-    if (session.username) {
-        document.getElementById("preLogin").style.display = 'none';
-        document.getElementById('logoutBtn').style.display = '';
-        if (session.isAdmin) {
-            document.getElementById('adminInfo').style.display = "block";
-            document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${session.teamId}`;
-            document.getElementById('estimationForm').style.display = '';
-            document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';
-        }
-        document.getElementById('estimationContainer').style.display = '';
-    } else {
-        document.getElementById("logoutBtn").style.display = 'none';
-    }
+    initPage();
 });
+socket.on("init", () => initPage());
 socket.on('refresh', () => location.reload());
 socket.on('logout', () => {
     if (!session.isAdmin) {
@@ -50,26 +39,76 @@ socket.on('users-update', (users) => {
     }
 });
 socket.on('votes-update', (stories) => {
+    document.getElementById('estimatedContainer').style.display = '';
+    const estimatedStories = stories?.filter(story => !story.isCurrent);
+    if (estimatedStories && estimatedStories.length > 0) {
+        document.getElementById('estimatedStories').textContent = '';
+        let story;
+        for (let i = estimatedStories.length - 1; i >= 0; i--) {
+            story = estimatedStories[i];
+            document.getElementById('estimatedStories').append(`Story: ${story.title}`);
+            document.getElementById('estimatedStories').innerHTML += '<br>';
+            document.getElementById('estimatedStories').append('Votes: ');
+            document.getElementById('estimatedStories').append(Object.keys(story.votes)
+                .map(username => `${username}: ${story.votes[username]}`)
+                .join(', '));
+            document.getElementById('estimatedStories').innerHTML += '<br>';
+            document.getElementById('estimatedStories').append(`Average: ${story.average}, Suggested: ${story.suggested}`);
+            document.getElementById('estimatedStories').innerHTML += '<br>';
+            if (i > 0) {
+                document.getElementById('estimatedStories').innerHTML +=
+                    '<hr style="border:0;height:1px;background:currentColor;opacity:.2;margin: 0.25em 0">';
+            }
+        }
+    } else {
+        document.getElementById('estimatedStories').textContent = 'N/A';
+    }
     const currentStory = stories?.find(story => story.isCurrent);
     if (currentStory) {
+        if (!session.isAdmin) {
+            document.getElementById('finishEstimationContainer').style.display = 'none';
+        }
         document.getElementById('estimationContainer').style.display = '';
         document.getElementById('currentStoryTitle').innerText = currentStory.title;
         const ulVotes = document.getElementById('votes');
         ulVotes.style.listStyle = 'none';
         ulVotes.innerHTML = '';
-        for (let username in currentStory?.votes) {
+        for (let username in currentStory.votes) {
             const li = document.createElement('li');
-            li.textContent = `✅ ${username} has voted `;
+            li.appendChild(document.createTextNode(`✅ ${username} has voted `));
+            if (session.isAdmin && session.username !== username) {
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.addEventListener('click', () => socket.emit('removeVote', username));
+                removeButton.style.marginLeft = '20px';
+                li.appendChild(removeButton);
+            }
             ulVotes.appendChild(li);
+        }
+        if (Object.keys(currentStory.votes).length === 0) {
+            const li = document.createElement('li');
+            li.appendChild(document.createTextNode(`⏳ Waiting for votes`));
+            ulVotes.appendChild(li);
+            document.getElementById('estimationContainer').style.display = '';
         }
         if (session.isAdmin) {
             document.getElementById('estimationForm').style.display = 'none';
         }
     } else {
+        // reset before hiding
+        const ulVotes = document.getElementById('votes');
+        ulVotes.style.listStyle = 'none';
+        ulVotes.innerHTML = '';
+        const li = document.createElement('li');
+        li.appendChild(document.createTextNode(`⏳ Waiting for votes`));
+        ulVotes.appendChild(li);
         document.getElementById('estimationContainer').style.display = 'none';
     }
 });
 socket.on('storyAdded', (stories) => {
+    if (!session.isAdmin) {
+        document.getElementById('finishEstimationContainer').style.display = 'none';
+    }
     document.getElementById('estimationContainer').style.display = '';
     const currentStory = stories.find(story => story.isCurrent);
     document.getElementById('currentStoryTitle').innerText = currentStory.title;
@@ -112,11 +151,29 @@ document.getElementById('startEstimationBtn').addEventListener('click', () => {
     }
     socket.emit('addStory', storyTitle);
     document.getElementById('estimationForm').style.display = 'none';
-    document.getElementById('estimationContainer').style.display = '';
+});
+
+document.getElementById('finishEstimationBtn').addEventListener('click', () => {
+    socket.emit('finishEstimation');
 });
 
 export const sendVote = (value) => {
     socket.emit('vote', value);
 };
-
 window.sendVote = sendVote;
+
+export const initPage = () => {
+    if (session.username) {
+        document.getElementById("preLogin").style.display = 'none';
+        document.getElementById('logoutBtn').style.display = '';
+        if (session.isAdmin) {
+            document.getElementById('adminInfo').style.display = "block";
+            document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${session.teamId}`;
+            document.getElementById('estimationForm').style.display = '';
+            document.getElementById('storyTitleInput').value = '';
+            document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';
+        }
+    } else {
+        document.getElementById("logoutBtn").style.display = 'none';
+    }
+}

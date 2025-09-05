@@ -14,7 +14,7 @@ import {
     removeUser,
     removeUserByTeamIdAndUsername,
     saveDb,
-    usernameExists
+    usernameExists, storiesWithHiddenVotesInCurrent, nearestFibonacci
 } from "./util.js";
 
 const FileStore = FileStorePkg(session);
@@ -100,13 +100,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('vote', (value) => {
-        if (!socket.request.session.username) {
+        const session = socket.request.session;
+        if (!session.username) {
             socket.emit('alert', 'User is not logged in');
             return;
         }
-        appData.get(socket.request.session.teamId).stories.find(story => story.isCurrent)
-            .votes[socket.request.session.username] = +value;
-        io.to(socket.request.session.teamId).emit('votes-update', appData.get(socket.request.session.teamId).stories);
+        appData.get(session.teamId).stories.find(story => story.isCurrent)
+            .votes[session.username] = +value;
+        io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, appData));
         saveDb(appData);
     });
 
@@ -137,6 +138,31 @@ io.on('connection', (socket) => {
             });
             console.log(`${username} has been removed by admin`);
             io.to(teamId).emit('users-update', appData.get(teamId).users);
+        }
+    });
+
+    socket.on('removeVote', (username) => {
+        const session = socket.request.session;
+        if (session.teamId && session.isAdmin) {
+            delete appData.get(session.teamId)?.stories.find(story => story.isCurrent)?.votes[username];
+            saveDb(appData);
+            console.log(`${username}'s vote has been removed by admin`);
+            io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, appData));
+        }
+    });
+
+    socket.on('finishEstimation', () => {
+        const session = socket.request.session;
+        if (session.teamId && session.isAdmin && appData.get(session.teamId).stories) {
+            const currentStory = appData.get(session.teamId).stories.find(story => story.isCurrent);
+            const average = Object.values(currentStory.votes).reduce((acc, value) => acc + value, 0) / Object.keys(currentStory.votes).length;
+            const suggested = nearestFibonacci(average);
+            currentStory.average = average;
+            currentStory.suggested = suggested;
+            currentStory.isCurrent = false;
+            io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, appData));
+            io.to(session.teamId).emit('init');
+            saveDb(appData);
         }
     });
 

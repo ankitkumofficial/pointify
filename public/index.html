@@ -121,37 +121,49 @@
     <div id="adminInfo" style="display: none">
     </div>
 
-    <br>
+    <div id="usersContainer" style="display: none">
+        <br>
+        <ul id="users"></ul>
+    </div>
 
     <div id="estimationForm" style="display: none">
-        <label for="storyTitleInput">Enter the title of current story:</label>
+        <br>
+        <label for="storyTitleInput">Enter the title of new story:</label>
         <textarea id="storyTitleInput" rows="2" style="display: block; width: 80%; padding: 15px;"></textarea>
         <br>
         <button id="startEstimationBtn">Start Estimation</button>
     </div>
-    <br>
-
-    <div id="usersContainer" style="display: none">
-        <ul id="users"></ul>
-    </div>
-
-    <br>
 
     <div id="estimationContainer" style="display: none">
-        <b>Estimating for:</b>
+        <br>
+        <b>Estimating:</b>
         <div id="currentStoryTitle"></div>
         <br>
         <div>
+            <b>Your vote:</b>
+            <br>
             <button onclick="sendVote(1)">1</button>
             <button onclick="sendVote(2)">2</button>
             <button onclick="sendVote(3)">3</button>
             <button onclick="sendVote(5)">5</button>
             <button onclick="sendVote(8)">8</button>
             <button onclick="sendVote(13)">13</button>
+            <button onclick="sendVote(21)">21</button>
+            <button onclick="sendVote(0)">?</button>
+            <div id="finishEstimationContainer">
+                <br><br>
+                <button id="finishEstimationBtn">Finish Estimation</button>
+            </div>
             <br><br>
-            <h2>Estimation:</h2>
+            <b>Voting status:</b>
             <ul id="votes"></ul>
         </div>
+    </div>
+
+    <div id="estimatedContainer" style="display: none">
+        <br>
+        <b>Estimated:</b>
+        <div id="estimatedStories"></div>
     </div>
 </div>
 
