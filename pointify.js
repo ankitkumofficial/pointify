@@ -34,8 +34,8 @@ const sessionMiddleware = session({
     cookie: {secure: false} // true if HTTPS
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleware);
+app.use(express.static(path.join(__dirname, 'public')));
 
 const server = http.createServer(app);
 const io = new Server(server);
@@ -83,20 +83,18 @@ io.on('connection', (socket) => {
         socket.request.session.teamId = `${userData.teamId}`;
         socket.request.session.isAdmin = userData.isAdmin;
         socket.request.session.save(err => {
-            if (err) {
-                console.log('Error in saving session', err);
+            if (err) console.log(err);
+            if (socket.request.session.isAdmin) {
+                appData.set(socket.request.session.teamId, {users: [], stories: []});
+            }
+            addUser(socket, appData);
+            io.to(socket.request.session.teamId).emit('users-update', appData.get(socket.request.session.teamId)?.users);
+            console.log(`${userData.username} has joined ${userData.teamId}`);
+            initUser(socket, appData);
+            if (socket.request.session.isAdmin) {
+                saveDb(appData);
             }
         });
-        if (socket.request.session.isAdmin) {
-            appData.set(socket.request.session.teamId, {users: [], stories: []});
-        }
-        addUser(socket, appData);
-        io.to(socket.request.session.teamId).emit('users-update', appData.get(socket.request.session.teamId)?.users);
-        console.log(`${userData.username} has joined ${userData.teamId}`);
-        initUser(socket, appData);
-        if (socket.request.session.isAdmin) {
-            saveDb(appData);
-        }
     });
 
     socket.on('vote', (value) => {

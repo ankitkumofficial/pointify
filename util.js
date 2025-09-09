@@ -5,7 +5,10 @@ import {fileURLToPath} from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const readDb = () => JSON.parse(fs.readFileSync(path.join(__dirname, 'db', 'data.json')));
+export const readDb = () => {
+    const data = fs.readFileSync(path.join(__dirname, 'db', 'data.json'), "utf8");
+    return JSON.parse(data || "{}");
+};
 
 export const saveDb = (appData) => {
     let dataToSave;
@@ -66,8 +69,8 @@ export const removeSession = (socket) => {
     delete socket.request.session.isAdmin;
     socket.request.session.save(err => {
         if (err) console.log(err);
+        socket.emit('refresh');
     });
-    socket.emit('refresh');
 };
 
 export const nearestFibonacci = (num) => {
