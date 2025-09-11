@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pointify</title>
     <style>
         * {
@@ -105,17 +106,21 @@
     <h1>Lets Pointify!</h1>
     <button id="logoutBtn" style="display: none">Logout</button>
     <div id="preLogin">
-        <label for="nameInput">Name: </label>
-        <input type="text" id="nameInput">
-        <input type="checkbox" id="isAdminInput">
-        <label for="isAdminInput">I'm Admin (New Team Id will be created)</label>
-        <div id="teamIdInputDiv">
-            <br>
+        <p>
+            <label for="nameInput">Name: </label>
+            <input type="text" id="nameInput">
+        </p>
+        <p>
+            <input type="checkbox" id="isAdminInput">
+            <label for="isAdminInput">I'm Admin</label>
+        </p>
+        <p id="teamIdField">
             <label for="teamIdInput">Team Id: </label>
             <input type="text" id="teamIdInput">
-        </div>
-        <br><br>
-        <button id="submitBtn"></button>
+        </p>
+        <p>
+            <button id="submitBtn"></button>
+        </p>
     </div>
 
     <div id="adminInfo" style="display: none">

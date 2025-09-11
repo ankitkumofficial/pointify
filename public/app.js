@@ -31,7 +31,7 @@ socket.on('users-update', (users) => {
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
                 removeButton.addEventListener('click', () => socket.emit('removeUser', users[i]));
-                removeButton.style.marginLeft = '20px';
+                removeButton.style.marginLeft = '1em';
                 li.appendChild(removeButton);
             }
             ulUsers.appendChild(li);
@@ -80,7 +80,7 @@ socket.on('votes-update', (stories) => {
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
                 removeButton.addEventListener('click', () => socket.emit('removeVote', username));
-                removeButton.style.marginLeft = '20px';
+                removeButton.style.marginLeft = '1em';
                 li.appendChild(removeButton);
             }
             ulVotes.appendChild(li);
