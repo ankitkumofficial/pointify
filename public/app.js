@@ -115,7 +115,7 @@ socket.on('storyAdded', (stories) => {
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-    socket.emit('logout', {});
+    socket.emit('logout');
 });
 
 handleAdminCheckBox();
