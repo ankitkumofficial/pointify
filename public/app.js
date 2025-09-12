@@ -21,17 +21,19 @@ socket.on('users-update', (users) => {
     if (users && users.length > 0) {
         document.getElementById('usersContainer').style.display = '';
         const ulUsers = document.getElementById('users');
+        ulUsers.style.listStyle = 'none';
         ulUsers.innerHTML = '';
         for (let i in users) {
             const li = document.createElement('li');
-            li.style.setProperty("--bullet-color", "green");
-            li.style.setProperty("--bullet-size", "1.25em");
-            li.appendChild(document.createTextNode(`${users[i]} is online`));
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.gap = '0.5rem';
+            li.style.padding = '0.25rem 0';
+            li.innerHTML += `<svg width="1rem" height="1rem" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"><circle id="Oval" cx="11" cy="11" r="5.10714286" fill="#108548"></circle></svg><span>${users[i]} is online</span>`;
             if (session.isAdmin && session.username !== users[i]) {
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
                 removeButton.addEventListener('click', () => socket.emit('removeUser', users[i]));
-                removeButton.style.marginLeft = '1em';
                 li.appendChild(removeButton);
             }
             ulUsers.appendChild(li);
@@ -41,27 +43,30 @@ socket.on('users-update', (users) => {
 socket.on('votes-update', (stories) => {
     document.getElementById('estimatedContainer').style.display = '';
     const estimatedStories = stories?.filter(story => !story.isCurrent);
+    document.getElementById('estimatedStories').textContent = '';
     if (estimatedStories && estimatedStories.length > 0) {
-        document.getElementById('estimatedStories').textContent = '';
         let story;
         for (let i = estimatedStories.length - 1; i >= 0; i--) {
             story = estimatedStories[i];
-            document.getElementById('estimatedStories').append(`Story: ${story.title}`);
-            document.getElementById('estimatedStories').innerHTML += '<br>';
-            document.getElementById('estimatedStories').append('Votes: ');
-            document.getElementById('estimatedStories').append(Object.keys(story.votes)
+            const estimatedStoryElem = document.createElement('p');
+            estimatedStoryElem.append(`Story: ${story.title}`);
+            estimatedStoryElem.innerHTML += '<br>';
+            estimatedStoryElem.append('Votes: ');
+            estimatedStoryElem.append(Object.keys(story.votes)
                 .map(username => `${username}: ${story.votes[username]}`)
                 .join(', '));
-            document.getElementById('estimatedStories').innerHTML += '<br>';
-            document.getElementById('estimatedStories').append(`Average: ${story.average}, Suggested: ${story.suggested}`);
-            document.getElementById('estimatedStories').innerHTML += '<br>';
+            estimatedStoryElem.innerHTML += '<br>';
+            estimatedStoryElem.append(`Average: ${story.average}, Suggested: ${story.suggested}`);
+            document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
             if (i > 0) {
                 document.getElementById('estimatedStories').innerHTML +=
-                    '<hr style="border:0;height:1px;background:currentColor;opacity:.2;margin: 0.25em 0">';
+                    '<hr style="border:0;height:0.0625rem;background:currentColor;opacity:.2;margin: 0.25em 0">';
             }
         }
     } else {
-        document.getElementById('estimatedStories').textContent = 'N/A';
+        const estimatedStoryElem = document.createElement('p');
+        estimatedStoryElem.innerText = 'No stories have been estimated yet.';
+        document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
     }
     const currentStory = stories?.find(story => story.isCurrent);
     if (currentStory) {
@@ -75,12 +80,15 @@ socket.on('votes-update', (stories) => {
         ulVotes.innerHTML = '';
         for (let username in currentStory.votes) {
             const li = document.createElement('li');
-            li.appendChild(document.createTextNode(`✅ ${username} has voted `));
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.gap = '0.5rem';
+            li.style.padding = '0.25rem 0';
+            li.innerHTML += `<svg width="1rem" height="1rem" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16Zm3.78-9.72a.75.75 0 0 0-1.06-1.06L6.75 9.19 5.53 7.97a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l4.5-4.5Z" fill="#108548"/></svg><span>${username} has voted</span>`;
             if (session.isAdmin && session.username !== username) {
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
                 removeButton.addEventListener('click', () => socket.emit('removeVote', username));
-                removeButton.style.marginLeft = '1em';
                 li.appendChild(removeButton);
             }
             ulVotes.appendChild(li);
@@ -130,10 +138,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
         return;
     }
     const isAdmin = document.getElementById('isAdminInput').checked;
-    if (isAdmin) {
-        document.getElementById('adminInfo').style.display = "block";
-        document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${teamId}`;
-    } else {
+    if (!isAdmin) {
         teamId = document.getElementById('teamIdInput').value;
         if (!teamId) {
             alert('Please input your teamId');
@@ -167,8 +172,8 @@ export const initPage = () => {
         document.getElementById("preLogin").style.display = 'none';
         document.getElementById('logoutBtn').style.display = '';
         if (session.isAdmin) {
-            document.getElementById('adminInfo').style.display = "block";
-            document.getElementById('adminInfo').innerHTML = `<br>Your colleagues can join with team id: ${session.teamId}`;
+            document.getElementById('adminInfo').style.display = '';
+            document.getElementById('adminInfo').innerText = `Your colleagues can join with team id: ${session.teamId}`;
             document.getElementById('estimationForm').style.display = '';
             document.getElementById('storyTitleInput').value = '';
             document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';
