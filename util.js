@@ -5,6 +5,9 @@ import {fileURLToPath} from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const nameRegex = /^[\p{L}\p{M}'\-\s]+$/u;
+const numRegex = /^\d+$/;
+
 let writeQueue = Promise.resolve();
 
 export const readDb = () => {
@@ -76,10 +79,22 @@ export const removeSession = (socket) => {
 };
 
 export const nearestFibonacci = (num) => {
-    if (num < 0) return 0;
+    if (!num || isNaN(num) || num < 0) return null;
     let a = 0, b = 1;
     while (b < num) {
         [a, b] = [b, a + b];
     }
     return (num - a < b - num) ? a : b;
 }
+
+export const getValidationError = (userData) => {
+    let error;
+    if (!nameRegex.test(userData.username)) {
+        error = "Username contains invalid characters";
+    } else if (!userData.isAdmin && !numRegex.test(userData.teamId)) {
+        error = "TeamId can only be a number";
+    } else {
+        error = null;
+    }
+    return error;
+};

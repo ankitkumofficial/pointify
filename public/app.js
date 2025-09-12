@@ -52,11 +52,12 @@ socket.on('votes-update', (stories) => {
             estimatedStoryElem.append(`Story: ${story.title}`);
             estimatedStoryElem.innerHTML += '<br>';
             estimatedStoryElem.append('Votes: ');
-            estimatedStoryElem.append(Object.keys(story.votes)
-                .map(username => `${username}: ${story.votes[username]}`)
-                .join(', '));
+            const concatenatedVotes = Object.keys(story.votes)
+                .map(username => `${username}: ${story.votes[username] ? story.votes[username] : '?'}`)
+                .join(', ');
+            estimatedStoryElem.append(concatenatedVotes || 'No one voted');
             estimatedStoryElem.innerHTML += '<br>';
-            estimatedStoryElem.append(`Average: ${story.average}, Suggested: ${story.suggested}`);
+            estimatedStoryElem.append(`Average: ${story.average || 'Not available'}, Recommended: ${story.suggested || 'Not available'}`);
             document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
             if (i > 0) {
                 document.getElementById('estimatedStories').innerHTML +=
@@ -131,7 +132,7 @@ handleAdminCheckBox();
 document.getElementById('isAdminInput').addEventListener('change', () => handleAdminCheckBox());
 
 document.getElementById('submitBtn').addEventListener('click', () => {
-    const username = document.getElementById('nameInput').value;
+    const username = document.getElementById('nameInput').value.trim();
     let teamId;
     if (!username) {
         alert('Please input your name');
@@ -139,7 +140,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     }
     const isAdmin = document.getElementById('isAdminInput').checked;
     if (!isAdmin) {
-        teamId = document.getElementById('teamIdInput').value;
+        teamId = document.getElementById('teamIdInput').value.trim();
         if (!teamId) {
             alert('Please input your teamId');
             return;
@@ -149,7 +150,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
 });
 
 document.getElementById('startEstimationBtn').addEventListener('click', () => {
-    const storyTitle = document.getElementById('storyTitleInput').value;
+    const storyTitle = document.getElementById('storyTitleInput').value.trim();
     if (!storyTitle) {
         alert('Please provide story title');
         return;

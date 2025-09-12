@@ -13,7 +13,7 @@ import {
     removeUser,
     removeUserByTeamIdAndUsername,
     saveDb,
-    usernameExists, storiesWithHiddenVotesInCurrent, nearestFibonacci
+    usernameExists, storiesWithHiddenVotesInCurrent, nearestFibonacci, getValidationError
 } from "./util.js";
 
 const FileStore = FileStorePkg(session);
@@ -58,6 +58,11 @@ io.on('connection', (socket) => {
     }
 
     socket.on('join-team', (userData) => {
+        const validationError = getValidationError(userData);
+        if (validationError) {
+            socket.emit('alert', validationError);
+            return;
+        }
         const session = socket.request.session;
         if (userData.isAdmin) {
             const MAX_ATTEMPTS = 10;
@@ -112,7 +117,7 @@ io.on('connection', (socket) => {
         }
         const teamData = readDb()[session.teamId];
         teamData.stories.find(story => story.isCurrent)
-            .votes[session.username] = +value;
+            .votes[session.username] = value && !isNaN(value) ? +value : null;
         io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, teamData));
         saveDb(db => db[session.teamId] = teamData);
     });
@@ -166,7 +171,8 @@ io.on('connection', (socket) => {
         const teamData = readDb()[session.teamId];
         if (session.teamId && session.isAdmin && teamData.stories.length > 0) {
             const currentStory = teamData.stories.find(story => story.isCurrent);
-            const average = Object.values(currentStory.votes).reduce((acc, value) => acc + value, 0) / Object.keys(currentStory.votes).length;
+            const votes = Object.values(currentStory.votes).filter(vote => vote);
+            const average = votes.length > 0 ? +(votes.reduce((acc, value) => acc + value, 0) / votes.length).toFixed(2) : null;
             const suggested = nearestFibonacci(average);
             currentStory.average = average;
             currentStory.suggested = suggested;
