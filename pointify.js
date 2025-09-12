@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
             let teamId;
             const existingTeamIds = Object.keys(readDb());
             for (attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-                teamId = Math.floor(1 + Math.random() * 9);
+                teamId = Math.floor(100 + Math.random() * 900);
                 if (!existingTeamIds.includes(`${teamId}`)) {
                     break;
                 }
