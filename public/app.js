@@ -141,7 +141,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     if (!isAdmin) {
         teamId = document.getElementById('teamIdInput').value.trim();
         if (!teamId) {
-            showPopup('Please input your teamId');
+            showPopup('Please input your team ID');
             return;
         }
     }
@@ -173,7 +173,7 @@ export const initPage = () => {
         document.getElementById('logoutBtn').style.display = '';
         if (session.isAdmin) {
             document.getElementById('adminInfo').style.display = '';
-            document.getElementById('adminInfo').innerText = `Your colleagues can join with team id: ${session.teamId}`;
+            document.getElementById('adminInfo').innerText = `Your colleagues can join with team ID: ${session.teamId}`;
             document.getElementById('estimationForm').style.display = '';
             document.getElementById('storyTitleInput').value = '';
             document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';

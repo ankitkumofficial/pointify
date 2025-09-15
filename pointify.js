@@ -76,14 +76,14 @@ io.on('connection', (socket) => {
                 }
             }
             if (attempt >= MAX_ATTEMPTS) {
-                socket.emit('alert', "Unable to generate new team Ids.");
+                socket.emit('alert', "Unable to generate new team IDs.");
                 return;
             }
             userData.teamId = teamId;
         }
         let teamData = readDb()[`${userData.teamId}`];
         if (!userData.isAdmin && !teamData) {
-            socket.emit('alert', "Team Id does not exist.");
+            socket.emit('alert', "Team ID does not exist.");
             return;
         }
         if (!userData.isAdmin && usernameExists(userData, usersCache)) {

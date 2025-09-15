@@ -92,7 +92,7 @@ export const getValidationError = (userData) => {
     if (!nameRegex.test(userData.username)) {
         error = "Username contains invalid characters";
     } else if (!userData.isAdmin && !numRegex.test(userData.teamId)) {
-        error = "TeamId can only be a number";
+        error = "Team ID can only be a number";
     } else {
         error = null;
     }
