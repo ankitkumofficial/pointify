@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
         }
         let teamData = readDb()[`${userData.teamId}`];
         if (!userData.isAdmin && !teamData) {
-            socket.emit('alert', "Team ID does not exist.");
+            socket.emit('alert', "Team ID does not exist");
             return;
         }
         if (!userData.isAdmin && usernameExists(userData, usersCache)) {

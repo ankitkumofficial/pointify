@@ -137,25 +137,45 @@
         .popup-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
 
         .popup {
-            background: #fff;
-            padding: 1.25rem;
-            border-radius: 0.5rem;
             width: 90%;
-            max-width: 20rem;
+            max-width: 22rem;
+            padding: 2rem;
             text-align: center;
-            position: relative;
-            box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+            background: rgba(245, 250, 255, 0.4);
+            backdrop-filter: blur(0.9375rem);
+            -webkit-backdrop-filter: blur(0.9375rem);
+            border-radius: 1rem;
+            border: 0.0625rem solid rgba(255, 255, 255, 0.3);
+        }
+
+        .popup p {
+            margin-bottom: 0.9375rem;
+            color: #111;
+        }
+
+        .popup button {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(0.625rem);
+            -webkit-backdrop-filter: blur(0.625rem);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .popup button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
         }
 
         /* ====== Responsive Adjustments ====== */
@@ -260,11 +280,11 @@
         <div id="estimatedStories"></div>
     </div>
 
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup">
-            <p id="popupMessage"></p>
-            <button onclick="closePopup()">Close</button>
-        </div>
+</div>
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+        <p id="popupMessage"></p>
+        <p><button onclick="closePopup()">Close</button></p>
     </div>
 </div>
 
