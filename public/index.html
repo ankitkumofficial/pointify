@@ -134,6 +134,30 @@
             transform: scale(0.95);
         }
 
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: #fff;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 20rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
+        }
+
         /* ====== Responsive Adjustments ====== */
         @media (max-width: 48rem) {
             body {
@@ -234,6 +258,13 @@
             <b>Estimated:</b>
         </p>
         <div id="estimatedStories"></div>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <p id="popupMessage"></p>
+            <button onclick="closePopup()">Close</button>
+        </div>
     </div>
 </div>
 

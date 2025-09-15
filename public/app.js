@@ -1,10 +1,9 @@
-import {handleAdminCheckBox} from "./util.js";
+import {handleAdminCheckBox, showPopup} from "./util.js";
 
 const socket = io();
 let session;
 socket.on('alert', (msg) => {
-    alert(msg);
-    location.reload();
+    showPopup(msg);
 });
 socket.on("sessionData", (sessionData) => {
     session = sessionData;
@@ -135,14 +134,14 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     const username = document.getElementById('nameInput').value.trim();
     let teamId;
     if (!username) {
-        alert('Please input your name');
+        showPopup('Please input your name');
         return;
     }
     const isAdmin = document.getElementById('isAdminInput').checked;
     if (!isAdmin) {
         teamId = document.getElementById('teamIdInput').value.trim();
         if (!teamId) {
-            alert('Please input your teamId');
+            showPopup('Please input your teamId');
             return;
         }
     }
@@ -152,7 +151,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
 document.getElementById('startEstimationBtn').addEventListener('click', () => {
     const storyTitle = document.getElementById('storyTitleInput').value.trim();
     if (!storyTitle) {
-        alert('Please provide story title');
+        showPopup('Please provide story title');
         return;
     }
     socket.emit('addStory', storyTitle);
