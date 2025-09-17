@@ -64,6 +64,10 @@ io.on('connection', (socket) => {
             return;
         }
         const session = socket.request.session;
+        if (session.isAdmin && session.teamId) {
+            socket.emit('alert', 'A team already exists for this session, please log out first');
+            return;
+        }
         if (userData.isAdmin) {
             const MAX_ATTEMPTS = 10;
             let attempt;
