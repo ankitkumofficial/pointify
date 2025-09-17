@@ -22,6 +22,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CUTOFF_MILLIS = 3 * 60 * 60 * 1000;
+const INTERVAL_MILLIS = 15 * 60 * 1000;
 
 const sessionMiddleware = session({
     store: new FileStore({
@@ -54,6 +56,8 @@ io.on('connection', (socket) => {
             addUserInCache(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
             initUser(socket, teamData, usersCache);
+        } else {
+            removeSession(socket);
         }
     }
 
@@ -218,3 +222,16 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
+
+setInterval(() => {
+    console.log("Cleanup initiated");
+    saveDb(db => {
+        const now = Date.now();
+        for (let teamId of Object.keys(db)) {
+            if ((now - db[teamId].createdAt) > CUTOFF_MILLIS) {
+                delete db[teamId];
+                console.log('System has removed the expired team', teamId);
+            }
+        }
+    }).then(() => console.log("Cleanup completed"));
+}, INTERVAL_MILLIS);
