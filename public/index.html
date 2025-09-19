@@ -94,6 +94,14 @@
             text-decoration: underline;
         }
 
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border: 0.1rem solid #ccc;
+            border-radius: 0.25rem;
+        }
+
         /* ====== Vote Buttons ====== */
         .vote-buttons {
             display: flex;
@@ -238,7 +246,7 @@
     <div id="estimationForm" style="display: none">
         <p>
             <label for="storyTitleInput">Enter the title of new story:</label>
-            <textarea id="storyTitleInput" rows="2" style="display: block; width: 100%; padding: 1rem;"></textarea>
+            <textarea id="storyTitleInput" rows="2"></textarea>
         </p>
         <p>
             <button id="startEstimationBtn">Start Estimation</button>
@@ -284,7 +292,9 @@
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
         <p id="popupMessage"></p>
-        <p><button onclick="closePopup()">Close</button></p>
+        <p>
+            <button onclick="closePopup()">Close</button>
+        </p>
     </div>
 </div>
 
