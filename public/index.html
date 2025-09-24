@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Pointify</title>
     <style>
         * {
@@ -11,95 +11,122 @@
             padding: 0;
         }
 
-        input, textarea, select {
-            font-size: 16px;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: linear-gradient(135deg, #d4dce6 0%, #e8f0f5 100%);
             color: #111;
             line-height: 1.6;
             padding: 1.25rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        input, textarea, select {
+            font-size: 16px;
         }
 
         /* ====== Glass Container ====== */
         .glass {
             position: relative;
-            max-width: 50rem;
+            width: 100%;
+            max-width: 42rem;
             margin: 1.25rem auto;
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 1.25rem;
 
-            background: rgba(245, 250, 255, 0.25);
-            backdrop-filter: blur(0.9375rem);
-            -webkit-backdrop-filter: blur(0.9375rem);
-            border: 0.0625rem solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(1rem);
+            -webkit-backdrop-filter: blur(1rem);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.08);
-
-            overflow: hidden;
         }
 
-        /* ====== Inner Glow Using Pseudo-element ====== */
-        .glass::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 1.25rem;
-            box-shadow: inset 0 0 3.125rem rgba(255, 255, 255, 0.08);
-            pointer-events: none;
+        @supports not ((backdrop-filter: blur(1rem))) {
+            .glass {
+                background: #ffffffee; /* fallback */
+            }
         }
 
-        /* ====== Text & Headings ====== */
-        .glass h1, .glass h2, .glass h3 {
-            margin-bottom: 1.25rem;
+        .glass h1 {
+            margin-bottom: 1.5rem;
             color: #111;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
         }
 
         .glass p {
-            margin-bottom: 0.9375rem;
-            color: #111;
+            margin-bottom: 1rem;
         }
 
-        /* ====== Default Buttons ====== */
-        .glass button {
-            padding: 0.625rem 1.25rem;
+        .glass ul {
+            margin-bottom: 1rem;
+        }
+
+        /* ====== Labels & Inputs ====== */
+        .glass label {
+            display: inline-block;
+            min-width: 6rem;
+            font-weight: 500;
+        }
+
+        .glass input[type="text"],
+        .glass textarea {
+            padding: 0.6rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 25rem;
+            transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .glass input[type="text"]:focus,
+        .glass textarea:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.25);
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* ====== Checkbox ====== */
+        .glass input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-right: 0.4rem;
+        }
+
+        /* ====== Buttons ====== */
+        .glass button,
+        .popup button {
+            padding: 0.6rem 1.25rem;
             border-radius: 0.75rem;
             border: none;
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(0.625rem);
-            -webkit-backdrop-filter: blur(0.625rem);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             transition: background 0.3s, transform 0.1s;
         }
 
-        .glass button:hover {
-            background: rgba(255, 255, 255, 0.5);
+        .glass button:hover,
+        .popup button:hover {
+            background: linear-gradient(135deg, #3a8ef6, #06d6d9);
             transform: scale(1.05);
         }
 
-        .glass button:active {
-            background: rgba(255, 255, 255, 0.45);
+        .glass button:active,
+        .popup button:active {
             transform: scale(0.95);
         }
 
-        /* ====== Links ====== */
-        .glass a {
-            color: #007aff;
-            text-decoration: none;
+        #logoutBtn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
         }
 
-        .glass a:hover {
-            text-decoration: underline;
-        }
-
-        textarea {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            border: 0.1rem solid #ccc;
-            border-radius: 0.25rem;
+        #logoutBtn:hover {
+            background: linear-gradient(135deg, #e63956, #e63c1f);
         }
 
         /* ====== Vote Buttons ====== */
@@ -108,40 +135,25 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             margin: 1rem 0;
-            max-width: 100%;
         }
 
         .vote-buttons button {
             flex: 1 1 12%;
             aspect-ratio: 1 / 1;
             border-radius: 50%;
-            border: none;
             background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(0.625rem);
-            -webkit-backdrop-filter: blur(0.625rem);
+            color: #111;
             font-size: 0.9rem;
             font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
             min-width: 2.5rem;
             max-width: 3rem;
         }
 
         .vote-buttons button:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.6);
         }
 
-        .vote-buttons button:active {
-            background: rgba(255, 255, 255, 0.45);
-            transform: scale(0.95);
-        }
-
+        /* ====== Popup Overlay ====== */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -157,45 +169,33 @@
             max-width: 22rem;
             padding: 2rem;
             text-align: center;
-            background: rgba(245, 250, 255, 0.4);
-            backdrop-filter: blur(0.9375rem);
-            -webkit-backdrop-filter: blur(0.9375rem);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(1rem);
+            -webkit-backdrop-filter: blur(1rem);
             border-radius: 1rem;
-            border: 0.0625rem solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .popup p {
-            margin-bottom: 0.9375rem;
+            margin-bottom: 1rem;
             color: #111;
         }
 
-        .popup button {
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.75rem;
-            border: none;
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(0.625rem);
-            -webkit-backdrop-filter: blur(0.625rem);
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s, transform 0.1s;
+        /* ====== Accessibility ====== */
+        :focus-visible {
+            outline: 3px solid #007aff;
+            outline-offset: 2px;
         }
 
-        .popup button:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
-        }
-
-        /* ====== Responsive Adjustments ====== */
-        @media (max-width: 48rem) {
-            body {
-                padding: 0.5rem;
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
             }
+        }
 
+        /* ====== Responsive ====== */
+        @media (max-width: 48rem) {
             .glass {
-                max-width: 100%;
-                width: 100%;
-                margin: 0.5rem auto;
                 padding: 1.25rem;
                 border-radius: 0.75rem;
             }
@@ -212,25 +212,25 @@
 
 <body>
 <div class="glass">
-    <h1>Lets Pointify!</h1>
+    <h1>Let's Pointify!</h1>
     <p>
-        <button id="logoutBtn" style="display: none">Logout</button>
+        <button id="logoutBtn" style="display: none">Delete Team and Logout</button>
     </p>
     <div id="preLogin">
         <p>
             <label for="nameInput">Name: </label>
-            <input type="text" id="nameInput">
+            <input type="text" id="nameInput"/>
         </p>
         <p>
-            <input type="checkbox" id="isAdminInput">
+            <input type="checkbox" id="isAdminInput"/>
             <label for="isAdminInput">I'm Admin</label>
         </p>
         <p id="teamIdField">
             <label for="teamIdInput">Team ID: </label>
-            <input type="text" id="teamIdInput">
+            <input type="text" id="teamIdInput"/>
         </p>
         <p>
-            <button id="submitBtn"></button>
+            <button id="submitBtn">Join</button>
         </p>
     </div>
 
@@ -239,28 +239,25 @@
     </div>
 
     <div id="usersContainer" style="display: none">
-        <ul id="users"></ul>
-        <p></p>
+        <ul id="users" aria-live="polite"></ul>
     </div>
 
-    <div id="estimationForm" style="display: none">
+    <div id="estimationForm" class="section" style="display: none">
         <p>
             <label for="storyTitleInput">Enter the title of new story:</label>
+        </p>
+        <p>
             <textarea id="storyTitleInput" rows="2"></textarea>
         </p>
         <p>
-            <button id="startEstimationBtn">Start Estimation</button>
+            <button id="startEstimationBtn" class="btn btn-primary">Start Estimation</button>
         </p>
     </div>
 
     <div id="estimationContainer" style="display: none">
-        <p>
-            <b>Estimating:</b>
-        </p>
+        <p><b>Estimating:</b></p>
         <p id="currentStoryTitle"></p>
-        <p>
-            <b>Your vote:</b>
-        </p>
+        <p><b>Your vote:</b></p>
         <p class="vote-buttons">
             <button onclick="sendVote(1)">1</button>
             <button onclick="sendVote(2)">2</button>
@@ -274,21 +271,16 @@
         <p id="finishEstimationContainer">
             <button id="finishEstimationBtn">Finish Estimation</button>
         </p>
-        <p>
-            <b>Voting status:</b>
-        </p>
-        <ul id="votes"></ul>
-        <p></p>
+        <p><b>Voting status:</b></p>
+        <ul id="votes" aria-live="polite"></ul>
     </div>
 
     <div id="estimatedContainer" style="display: none">
-        <p>
-            <b>Estimated:</b>
-        </p>
+        <p><b>Estimated:</b></p>
         <div id="estimatedStories"></div>
     </div>
-
 </div>
+
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
         <p id="popupMessage"></p>

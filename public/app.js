@@ -173,7 +173,7 @@ export const initPage = () => {
         document.getElementById('logoutBtn').style.display = '';
         if (session.isAdmin) {
             document.getElementById('adminInfo').style.display = '';
-            document.getElementById('adminInfo').innerText = `Your colleagues can join with team ID: ${session.teamId}`;
+            document.getElementById('adminInfo').innerHTML = `Your colleagues can join with Team ID: <b>${session.teamId}</b>`;
             document.getElementById('estimationForm').style.display = '';
             document.getElementById('storyTitleInput').value = '';
             document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';
