@@ -1,4 +1,4 @@
-import {handleAdminCheckBox, showPopup} from "./util.js";
+import {clearVoteButtons, handleAdminCheckBox, showPopup} from "./util.js";
 
 const socket = io();
 let session;
@@ -117,6 +117,7 @@ socket.on('storyAdded', (stories) => {
     if (!session.isAdmin) {
         document.getElementById('finishEstimationContainer').style.display = 'none';
     }
+    clearVoteButtons();
     document.getElementById('estimationContainer').style.display = '';
     const currentStory = stories.find(story => story.isCurrent);
     document.getElementById('currentStoryTitle').innerText = currentStory.title;
@@ -163,6 +164,11 @@ document.getElementById('finishEstimationBtn').addEventListener('click', () => {
 });
 
 export const sendVote = (value) => {
+    const voteButtons = clearVoteButtons();
+    const clickedButton = Array.from(voteButtons).find(btn => {
+        return btn.textContent === (value === null ? "?" : value.toString());
+    });
+    if (clickedButton) clickedButton.classList.add('selected');
     socket.emit('vote', value);
 };
 window.sendVote = sendVote;

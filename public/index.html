@@ -33,92 +33,90 @@
             width: 100%;
             max-width: 42rem;
             margin: 1.25rem auto;
-            padding: 2rem;
+            padding: 2.25rem;
             border-radius: 1.25rem;
-
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(1rem);
-            -webkit-backdrop-filter: blur(1rem);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(1.2rem) saturate(180%);
+            -webkit-backdrop-filter: blur(1.2rem) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
         }
 
-        @supports not ((backdrop-filter: blur(1rem))) {
-            .glass {
-                background: #ffffffee; /* fallback */
-            }
-        }
-
-        .glass h1 {
-            margin-bottom: 1.5rem;
-            color: #111;
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
         .glass p {
             margin-bottom: 1rem;
         }
 
-        .glass ul {
-            margin-bottom: 1rem;
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #111;
+        }
+
+        section {
+            margin-bottom: 2rem;
         }
 
         /* ====== Labels & Inputs ====== */
-        .glass label {
+        label {
             display: inline-block;
             min-width: 6rem;
             font-weight: 500;
         }
 
-        .glass input[type="text"],
-        .glass textarea {
-            padding: 0.6rem 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.15);
+        input[type="text"],
+        textarea {
+            padding: 0.7rem 0.9rem;
+            border-radius: 0.65rem;
+            border: 1px solid rgba(0, 0, 0, 0.12);
             width: 100%;
             max-width: 25rem;
-            transition: border 0.2s, box-shadow 0.2s, background 0.2s;
-            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.55);
         }
 
-        .glass input[type="text"]:focus,
-        .glass textarea:focus {
+        input[type="text"]:focus,
+        textarea:focus {
             border-color: #007aff;
-            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
             outline: none;
             background: rgba(255, 255, 255, 0.9);
         }
 
         /* ====== Checkbox ====== */
-        .glass input[type="checkbox"] {
+        input[type="checkbox"] {
             transform: scale(1.2);
             margin-right: 0.4rem;
+            accent-color: #007aff;
         }
 
         /* ====== Buttons ====== */
-        .glass button,
-        .popup button {
-            padding: 0.6rem 1.25rem;
-            border-radius: 0.75rem;
+        button {
+            padding: 0.7rem 1.4rem;
+            border-radius: 0.8rem;
             border: none;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             color: white;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.25s ease-in-out;
         }
 
-        .glass button:hover,
-        .popup button:hover {
+        button:hover {
             background: linear-gradient(135deg, #3a8ef6, #06d6d9);
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .glass button:active,
-        .popup button:active {
-            transform: scale(0.95);
+        button:active {
+            transform: scale(0.97);
         }
 
         #logoutBtn {
@@ -133,8 +131,9 @@
         .vote-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
+            gap: 0.6rem;
+            margin: 1.5rem 0;
+            justify-content: center;
         }
 
         .vote-buttons button {
@@ -143,18 +142,43 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.35);
             color: #111;
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: bold;
-            min-width: 2.5rem;
-            max-width: 3rem;
+            min-width: 2.8rem;
+            max-width: 3.2rem;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .vote-buttons button:hover {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .vote-buttons button:focus-visible {
+            outline: 3px solid #007aff;
+            outline-offset: 2px;
+        }
+
+        .vote-buttons button.selected {
+            background: linear-gradient(135deg, #007aff, #00c6ff);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.08);
+            box-shadow: 0 6px 12px rgba(0, 122, 255, 0.25);
+        }
+
+        /* ====== Lists ====== */
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 0.3rem 0;
         }
 
         /* ====== Popup Overlay ====== */
@@ -174,10 +198,11 @@
             padding: 2rem;
             text-align: center;
             background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(1rem);
-            -webkit-backdrop-filter: blur(1rem);
+            backdrop-filter: blur(1rem) saturate(180%);
+            -webkit-backdrop-filter: blur(1rem) saturate(180%);
             border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
         }
 
         .popup p {
@@ -200,14 +225,20 @@
         /* ====== Responsive ====== */
         @media (max-width: 48rem) {
             .glass {
-                padding: 1.25rem;
-                border-radius: 0.75rem;
+                padding: 1.5rem;
+                border-radius: 1rem;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
             }
 
             .vote-buttons button {
                 flex: 1 1 20%;
-                min-width: 2rem;
-                max-width: 2.5rem;
+                min-width: 2.3rem;
+                max-width: 2.6rem;
                 font-size: 0.85rem;
             }
         }
@@ -216,11 +247,12 @@
 
 <body>
 <div class="glass">
-    <h1>Let's Pointify!</h1>
-    <p>
+    <header>
+        <h1>Let's Pointify!</h1>
         <button id="logoutBtn" style="display: none">Logout</button>
-    </p>
-    <div id="preLogin">
+    </header>
+
+    <section id="preLogin">
         <p>
             <label for="nameInput">Name: </label>
             <input type="text" id="nameInput"/>
@@ -236,17 +268,19 @@
         <p>
             <button id="submitBtn">Join</button>
         </p>
-    </div>
+    </section>
 
-    <div>
+    <section>
         <p id="adminInfo" style="display: none"></p>
-    </div>
+    </section>
 
-    <div id="usersContainer" style="display: none">
+    <section id="usersContainer" style="display: none">
+        <h2>Team Members</h2>
         <ul id="users" aria-live="polite"></ul>
-    </div>
+    </section>
 
-    <div id="estimationForm" class="section" style="display: none">
+    <section id="estimationForm" style="display: none">
+        <h2>New Story</h2>
         <p>
             <label for="storyTitleInput">Enter the title of new story:</label>
         </p>
@@ -254,15 +288,17 @@
             <textarea id="storyTitleInput" rows="2"></textarea>
         </p>
         <p>
-            <button id="startEstimationBtn" class="btn btn-primary">Start Estimation</button>
+            <button id="startEstimationBtn">Start Estimation</button>
         </p>
-    </div>
+    </section>
 
-    <div id="estimationContainer" style="display: none">
+    <section id="estimationContainer" style="display: none">
+        <h2>Estimation</h2>
         <p><b>Estimating:</b></p>
         <p id="currentStoryTitle"></p>
+
         <p><b>Your vote:</b></p>
-        <p class="vote-buttons">
+        <div id="voteButtons" class="vote-buttons">
             <button onclick="sendVote(1)">1</button>
             <button onclick="sendVote(2)">2</button>
             <button onclick="sendVote(3)">3</button>
@@ -271,18 +307,20 @@
             <button onclick="sendVote(13)">13</button>
             <button onclick="sendVote(21)">21</button>
             <button onclick="sendVote(null)">?</button>
-        </p>
+        </div>
+
         <p id="finishEstimationContainer">
             <button id="finishEstimationBtn">Finish Estimation</button>
         </p>
+
         <p><b>Voting status:</b></p>
         <ul id="votes" aria-live="polite"></ul>
-    </div>
+    </section>
 
-    <div id="estimatedContainer" style="display: none">
-        <p><b>Estimated:</b></p>
+    <section id="estimatedContainer" style="display: none">
+        <h2>Estimated Stories</h2>
         <div id="estimatedStories"></div>
-    </div>
+    </section>
 </div>
 
 <div class="popup-overlay" id="popupOverlay">

@@ -14,3 +14,10 @@ export const closePopup = () => {
     document.getElementById("popupOverlay").style.display = "none";
 };
 window.closePopup = closePopup;
+
+export const clearVoteButtons = () => {
+    let voteButtons = document.getElementById('voteButtons');
+    voteButtons = voteButtons.querySelectorAll('button');
+    voteButtons.forEach(btn => btn.classList.remove('selected'));
+    return voteButtons;
+}
