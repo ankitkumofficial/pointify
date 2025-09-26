@@ -75,6 +75,7 @@ socket.on('votes-update', (stories) => {
         if (!session.isAdmin) {
             document.getElementById('finishEstimationContainer').style.display = 'none';
         }
+        document.getElementById(`voteBtn${currentStory.votes[session.username]}`)?.classList.add("selected");
         document.getElementById('estimationContainer').style.display = '';
         document.getElementById('currentStoryTitle').innerText = currentStory.title;
         const ulVotes = document.getElementById('votes');

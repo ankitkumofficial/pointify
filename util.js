@@ -32,18 +32,19 @@ export const saveDb = (updateFn) => {
 export const usernameExists = (userData, usersCache) => usersCache[userData.teamId].find(user => user === userData.username);
 
 export const initUser = (socket, teamData, usersCache) => {
-    socket.join(socket.request.session.teamId);
-    socket.emit("sessionData", socket.request.session);
-    socket.emit('users-update', usersCache[socket.request.session.teamId]);
-    socket.emit('votes-update', storiesWithHiddenVotesInCurrent(socket.request.session.teamId, teamData));
+    const session = socket.request.session;
+    socket.join(session.teamId);
+    socket.emit("sessionData", session);
+    socket.emit('users-update', usersCache[session.teamId]);
+    socket.emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, teamData, session.username));
 };
 
-export const storiesWithHiddenVotesInCurrent = (teamId, teamData) => {
+export const storiesWithHiddenVotesInCurrent = (teamId, teamData, username) => {
     const estimatedStories = teamData.stories.filter(story => !story.isCurrent);
     let currentStory = teamData.stories.filter(story => story.isCurrent);
     if (currentStory?.[0]) {
         currentStory = JSON.parse(JSON.stringify(currentStory)); // remove reference from original object
-        Object.keys(currentStory[0].votes).forEach(vote => currentStory[0].votes[vote] = 0);
+        Object.keys(currentStory[0].votes).forEach(vote => vote === username || (currentStory[0].votes[vote] = 0));
     }
     return [...(estimatedStories ?? []), ...(currentStory ?? [])];
 };
