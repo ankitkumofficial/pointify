@@ -31,7 +31,7 @@
         .glass {
             position: relative;
             width: 100%;
-            max-width: 42rem;
+            max-width: 48rem;
             margin: 1.25rem auto;
             padding: 2.25rem;
             border-radius: 1.25rem;
@@ -179,6 +179,18 @@
 
         ul li {
             padding: 0.3rem 0;
+        }
+
+        .list-item {
+            display: block;
+            margin-left: 2em;
+            position: relative;
+        }
+
+        .list-item::before {
+            content: "⭐️";
+            position: absolute;
+            left: -1.5em;
         }
 
         /* ====== Popup Overlay ====== */

@@ -48,20 +48,22 @@ socket.on('votes-update', (stories) => {
         for (let i = estimatedStories.length - 1; i >= 0; i--) {
             story = estimatedStories[i];
             const estimatedStoryElem = document.createElement('p');
-            estimatedStoryElem.append(`Story: ${story.title}`);
+            estimatedStoryElem.innerHTML += `<b>Title:</b> ${story.title}`;
             estimatedStoryElem.innerHTML += '<br>';
-            estimatedStoryElem.append('Votes: ');
-            const concatenatedVotes = Object.keys(story.votes)
-                .map(username => `${username}: ${story.votes[username] ? story.votes[username] : '?'}`)
-                .join(', ');
-            estimatedStoryElem.append(concatenatedVotes || 'No one voted');
-            estimatedStoryElem.innerHTML += '<br>';
-            estimatedStoryElem.append(`Average: ${story.average || 'Not available'}, Recommended: ${story.suggested || 'Not available'}`);
-            document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
-            if (i > 0) {
-                document.getElementById('estimatedStories').innerHTML +=
-                    '<hr style="border:0;height:0.0625rem;background:currentColor;opacity:.2;margin: 0.25em 0">';
+            estimatedStoryElem.innerHTML += '<b>Votes:</b> ';
+            if (Object.keys(story.votes) && Object.keys(story.votes).length > 0) {
+                let votesList = '';
+                Object.keys(story.votes).forEach(username =>
+                    votesList += `<span class="list-item">${username}: ${story.votes[username] ? story.votes[username] : '?'}</span>`);
+                estimatedStoryElem.innerHTML += votesList;
+            } else {
+                estimatedStoryElem.innerHTML += 'No one voted';
+                estimatedStoryElem.innerHTML += '<br>';
             }
+            estimatedStoryElem.innerHTML += `<b>Average Estimate:</b> ${story.average || 'Not available'}`;
+            estimatedStoryElem.innerHTML += '<br>';
+            estimatedStoryElem.innerHTML += `<b>Recommended Estimate</b>: ${story.suggested || 'Not available'}`;
+            document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
         }
     } else {
         const estimatedStoryElem = document.createElement('p');
