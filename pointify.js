@@ -141,12 +141,12 @@ io.on('connection', (socket) => {
                 average: undefined,
                 final: undefined
             });
-            io.to(session.teamId).emit('storyAdded', teamData.stories);
+            io.to(session.teamId).emit('story-added', teamData.stories);
             saveDb(db => db[session.teamId] = teamData);
         }
     });
 
-    socket.on('removeUser', (username) => {
+    socket.on('remove-user', (username) => {
         const session = socket.request.session;
         const teamId = session.teamId;
         if (session.isAdmin && teamId) {
@@ -154,7 +154,7 @@ io.on('connection', (socket) => {
             io.in(teamId).fetchSockets().then((sockets) => {
                 sockets.forEach(socketObj => {
                     if (socketObj.request.session.username === username) {
-                        removeSession(socketObj);
+                        removeSession(socketObj, 'You have been removed by admin');
                     }
                 });
             });
@@ -163,12 +163,19 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('removeVote', (username) => {
+    socket.on('remove-vote', (username) => {
         const session = socket.request.session;
         if (session.teamId && session.isAdmin) {
             const teamData = readDb()[session.teamId];
             delete teamData.stories.find(story => story.isCurrent)?.votes[username];
             saveDb(db => db[session.teamId] = teamData);
+            io.in(session.teamId).fetchSockets().then((sockets) => {
+                sockets.forEach(socketObj => {
+                    if (socketObj.request.session.username === username) {
+                        socketObj.emit('removed-vote');
+                    }
+                });
+            });
             console.log(`${username}'s vote has been removed by admin`);
             io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, teamData));
         }
@@ -201,12 +208,21 @@ io.on('connection', (socket) => {
         if (session.isAdmin) {
             const teamId = session.teamId;
             saveDb(db => delete db[teamId]); // callback function requires constant teamId
-            io.to(socket.request.session.teamId).emit('logout');
+            delete usersCache[teamId];
+            io.in(teamId).fetchSockets().then((sockets) => {
+                sockets.forEach(socketObj => {
+                    if (socketObj.request.session.isAdmin) {
+                        removeSession(socketObj);
+                    } else {
+                        removeSession(socketObj, 'Your team has been deleted by admin');
+                    }
+                });
+            });
         } else {
             removeUser(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
+            removeSession(socket);
         }
-        removeSession(socket);
     });
 
     socket.on('disconnect', () => {

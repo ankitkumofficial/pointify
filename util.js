@@ -34,7 +34,7 @@ export const usernameExists = (userData, usersCache) => usersCache[userData.team
 export const initUser = (socket, teamData, usersCache) => {
     const session = socket.request.session;
     socket.join(session.teamId);
-    socket.emit("sessionData", session);
+    socket.emit("session-data", session);
     socket.emit('users-update', usersCache[session.teamId]);
     socket.emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, teamData, session.username));
 };
@@ -69,13 +69,13 @@ export const addUserInCache = (session, usersCache) => {
     usersCache[session.teamId] = [...users];
 };
 
-export const removeSession = (socket) => {
+export const removeSession = (socket, message) => {
     delete socket.request.session.username;
     delete socket.request.session.teamId;
     delete socket.request.session.isAdmin;
     socket.request.session.save(err => {
         if (err) console.log(err);
-        socket.emit('refresh');
+        socket.emit('refresh', message);
     });
 };
 
