@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
             socket.emit('alert', "Team ID does not exist");
             return;
         }
-        if (!userData.isAdmin && usernameExists(userData, usersCache)) {
+        if (!userData.isAdmin && (usernameExists(userData, usersCache) || userData.username === teamData?.admin)) {
             socket.emit('alert', "Username is not available.");
             return;
         }
@@ -103,8 +103,8 @@ io.on('connection', (socket) => {
         session.isAdmin = userData.isAdmin;
         session.save(err => {
             if (err) console.log(err);
-            if (socket.request.session.isAdmin) {
-                teamData = {stories: []};
+            if (session.isAdmin) {
+                teamData = {admin: session.username, stories: []};
             }
             addUserInCache(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
