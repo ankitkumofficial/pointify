@@ -24,7 +24,7 @@
         }
 
         input, textarea, select {
-            font-size: 16px;
+            font-size: 1rem;
         }
 
         /* ====== Glass Container ====== */
@@ -107,6 +107,10 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.25s ease-in-out;
+        }
+
+        button + button {
+            margin-left: 0.75rem;
         }
 
         button:hover {
@@ -248,9 +252,18 @@
 
         /* ====== Responsive ====== */
         @media (max-width: 48rem) {
+            body {
+                padding: 0;
+            }
+
             .glass {
+                width: 100%;
+                min-height: 100vh;
+                max-width: none;
+                max-height: none;
+                margin: 0;
                 padding: 1.5rem;
-                border-radius: 1rem;
+                border-radius: 0;
             }
 
             header {
@@ -259,11 +272,52 @@
                 gap: 0.75rem;
             }
 
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            button {
+                padding: 1rem 0;
+                font-size: 1.1rem;
+                width: 100%;
+                min-height: 3rem;
+            }
+
+            button + button {
+                margin-top: 0.5rem;
+            }
+
+            button.remove {
+                width: auto;
+                display: inline-block;
+                padding: 0.7rem 1.2rem;
+                font-size: 1rem;
+                min-height: auto;
+            }
+
+            input[type="text"],
+            textarea {
+                max-width: 100%;
+                font-size: 1rem;
+            }
+
+            .vote-buttons {
+                gap: 0.8rem;
+            }
+
             .vote-buttons button {
                 flex: 1 1 20%;
-                min-width: 2.3rem;
-                max-width: 2.6rem;
-                font-size: 0.85rem;
+                min-width: 2.75rem;
+                max-width: none;
+                font-size: 0.9rem;
+                aspect-ratio: 1 / 1;
+                padding: 0;
+            }
+
+            .popup {
+                width: 90%;
+                max-width: none;
+                padding: 1.25rem;
             }
         }
     </style>
@@ -350,9 +404,11 @@
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
         <p id="popupMessage"></p>
-        <p>
+        <div id="popupButtons">
             <button id="closePopupBtn">Close</button>
-        </p>
+            <button id="yesPopupBtn">Yes</button>
+            <button id="noPopupBtn">No</button>
+        </div>
     </div>
 </div>
 

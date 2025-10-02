@@ -12,7 +12,7 @@ socket.on("session-data", (sessionData) => {
 socket.on("init", () => initPage());
 socket.on('refresh', (message) => {
     if (message) {
-        showPopup(message, () => location.reload());
+        showPopup(message, {onClose: () => location.reload()});
     } else {
         location.reload();
     }
@@ -136,7 +136,7 @@ socket.on('removed-vote', () => {
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-    socket.emit('logout');
+    showPopup('Are you sure you want to logout ?', {onYes: () => socket.emit('logout'), onNo: () => {}});
 });
 
 handleAdminCheckBox();
