@@ -186,7 +186,11 @@ document.getElementById('startEstimationBtn').addEventListener('click', () => {
 });
 
 document.getElementById('finishEstimationBtn').addEventListener('click', () => {
-    socket.emit('finishEstimation');
+    showPopup('Are you sure you want to finalize the estimation?', {
+        onYes: () => socket.emit('finishEstimation'),
+        onNo: () => {
+        }
+    });
 });
 
 export const sendVote = (value) => {
