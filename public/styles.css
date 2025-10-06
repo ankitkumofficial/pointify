@@ -232,6 +232,37 @@ ul li {
     color: #111;
 }
 
+.card {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(1.2rem) saturate(180%);
+    -webkit-backdrop-filter: blur(1.2rem) saturate(180%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 35rem;
+    width: 100%;
+}
+
+.card:hover {
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}
+
+.divider {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin: 1rem 0;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+    border-radius: 0.5px;
+    box-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
 /* ====== Accessibility ====== */
 :focus-visible {
     outline: 3px solid #007aff;
@@ -319,5 +350,10 @@ ul li {
         width: 90%;
         max-width: none;
         padding: 1.25rem;
+    }
+
+    .card {
+        padding: 1rem;
+        border-radius: 0.75rem;
     }
 }

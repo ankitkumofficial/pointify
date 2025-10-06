@@ -56,8 +56,9 @@ socket.on('votes-update', (stories) => {
         for (let i = estimatedStories.length - 1; i >= 0; i--) {
             story = estimatedStories[i];
             const estimatedStoryElem = document.createElement('p');
+            estimatedStoryElem.classList.add('card');
             estimatedStoryElem.innerHTML += `<b>Title:</b> ${story.title}`;
-            estimatedStoryElem.innerHTML += '<br>';
+            estimatedStoryElem.innerHTML += '<span class="divider"></span>';
             estimatedStoryElem.innerHTML += '<b>Votes:</b> ';
             if (Object.keys(story.votes) && Object.keys(story.votes).length > 0) {
                 let votesList = '';
@@ -66,10 +67,10 @@ socket.on('votes-update', (stories) => {
                 estimatedStoryElem.innerHTML += votesList;
             } else {
                 estimatedStoryElem.innerHTML += 'No one voted';
-                estimatedStoryElem.innerHTML += '<br>';
             }
+            estimatedStoryElem.innerHTML += '<span class="divider"></span>';
             estimatedStoryElem.innerHTML += `<b>Average Estimate:</b> ${story.average || 'Not available'}`;
-            estimatedStoryElem.innerHTML += '<br>';
+            estimatedStoryElem.innerHTML += '<span class="divider"></span>';
             estimatedStoryElem.innerHTML += `<b>Recommended Estimate</b>: ${story.suggested || 'Not available'}`;
             document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
         }
