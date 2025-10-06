@@ -46,6 +46,12 @@ window.showPopup = showPopup;
 export const clearVoteButtons = () => {
     let voteButtons = document.getElementById('voteButtons');
     voteButtons = voteButtons.querySelectorAll('button');
-    voteButtons.forEach(btn => btn.classList.remove('selected'));
+    voteButtons.forEach(btn => {
+        if (btn.classList.contains('selected')) {
+            btn.classList.remove('selected');
+            const clonedBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(clonedBtn, btn);
+        }
+    });
     return voteButtons;
 }

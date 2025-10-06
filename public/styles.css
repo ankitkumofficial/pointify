@@ -194,10 +194,11 @@ ul li {
     display: block;
     margin-left: 2em;
     position: relative;
+    padding: 0.25rem 0;
 }
 
 .list-item::before {
-    content: "⭐️";
+    content: "☆";
     position: absolute;
     left: -1.5em;
 }
