@@ -60,7 +60,7 @@ socket.on('votes-update', (stories) => {
             if (i === estimatedStories.length - 1) {
                 estimatedStoryElem.innerHTML += '<span class="ribbon">LATEST</span>';
             }
-            estimatedStoryElem.innerHTML += `<b>Title:</b> ${story.title}`;
+            estimatedStoryElem.innerHTML += `<b>${story.title}</b>`;
             estimatedStoryElem.innerHTML += '<span class="divider"></span>';
             estimatedStoryElem.innerHTML += '<b>Votes:</b> ';
             if (Object.keys(story.votes) && Object.keys(story.votes).length > 0) {
@@ -72,9 +72,8 @@ socket.on('votes-update', (stories) => {
                 estimatedStoryElem.innerHTML += 'No one voted';
             }
             estimatedStoryElem.innerHTML += '<span class="divider"></span>';
-            estimatedStoryElem.innerHTML += `<b>Average Estimate:</b> ${story.average || 'Not available'}`;
-            estimatedStoryElem.innerHTML += '<span class="divider"></span>';
-            estimatedStoryElem.innerHTML += `<b>Recommended Estimate</b>: ${story.suggested || 'Not available'}`;
+            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Average Estimate:</span><span class="count">${story.average || 'Not available'}</span></span>`;
+            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Recommended Estimate:</span><span class="count">${story.suggested || 'Not available'}</span></span>`;
             document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
         }
     } else {
