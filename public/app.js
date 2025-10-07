@@ -62,18 +62,21 @@ socket.on('votes-update', (stories) => {
             }
             estimatedStoryElem.innerHTML += `<b>${story.title}</b>`;
             estimatedStoryElem.innerHTML += '<span class="divider"></span>';
-            estimatedStoryElem.innerHTML += '<b>Votes:</b> ';
             if (Object.keys(story.votes) && Object.keys(story.votes).length > 0) {
                 let votesList = '';
-                Object.keys(story.votes).forEach(username =>
-                    votesList += `<span class="list-item">${username}: ${story.votes[username] ? story.votes[username] : '?'}</span>`);
-                estimatedStoryElem.innerHTML += votesList;
+                Object.keys(story.votes).forEach(username => {
+                    votesList += '<span class="vote-item">';
+                    votesList += `<span class="vote-name">${username}</span>`;
+                    votesList += `<span class="vote-value">${story.votes[username] ? story.votes[username] : '?'}</span>`;
+                    votesList += '</span>';
+                });
+                estimatedStoryElem.innerHTML += `<span class="vote-list">${votesList}</span>`;
             } else {
                 estimatedStoryElem.innerHTML += 'No one voted';
             }
             estimatedStoryElem.innerHTML += '<span class="divider"></span>';
-            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Average Estimate:</span><span class="count">${story.average || 'Not available'}</span></span>`;
-            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Recommended Estimate:</span><span class="count">${story.suggested || 'Not available'}</span></span>`;
+            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Average:</span><span class="count">${story.average || 'Not available'}</span></span>`;
+            estimatedStoryElem.innerHTML += `<span class="chip"><span class="label">Recommended:</span><span class="count">${story.suggested || 'Not available'}</span></span>`;
             document.getElementById('estimatedStories').appendChild(estimatedStoryElem);
         }
     } else {
