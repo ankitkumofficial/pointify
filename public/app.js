@@ -57,6 +57,9 @@ socket.on('votes-update', (stories) => {
             story = estimatedStories[i];
             const estimatedStoryElem = document.createElement('p');
             estimatedStoryElem.classList.add('card');
+            if (i === estimatedStories.length - 1) {
+                estimatedStoryElem.innerHTML += '<span class="ribbon">LATEST</span>';
+            }
             estimatedStoryElem.innerHTML += `<b>Title:</b> ${story.title}`;
             estimatedStoryElem.innerHTML += '<span class="divider"></span>';
             estimatedStoryElem.innerHTML += '<b>Votes:</b> ';
