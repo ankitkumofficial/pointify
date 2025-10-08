@@ -214,8 +214,22 @@ export const initPage = () => {
         document.getElementById("preLogin").style.display = 'none';
         document.getElementById('logoutBtn').style.display = '';
         if (session.isAdmin) {
-            document.getElementById('adminInfo').style.display = '';
-            document.getElementById('adminInfo').innerHTML = `Your colleagues can join with Team ID: <b>${session.teamId}</b>`;
+            const adminInfoElem = document.getElementById('adminInfo');
+            adminInfoElem.style.display = '';
+            adminInfoElem.innerHTML = `Your team can join with Team ID: <b>${session.teamId}</b>`;
+            const copyToClipboardText = '<svg width="1rem" height="1rem" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 9.5H2.5v-7h7V4H11V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V9.5Zm9.5 4h-7v-7h7v7ZM5 6a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6Z" fill="#000"/></svg> Copy';
+            adminInfoElem.innerHTML += `<span id="copyToClipboard" style="margin-left: 0.5rem; cursor: pointer; font-size: 0.8rem">${copyToClipboardText}</span>`;
+            const copyToClipboardElem = document.getElementById('copyToClipboard');
+            copyToClipboardElem.addEventListener('click', () => {
+                navigator.clipboard.writeText(session.teamId).then(() => {
+                    copyToClipboardElem.style.color = '#28a745';
+                    copyToClipboardElem.innerText = 'Copied!';
+                    setTimeout(() => {
+                        copyToClipboardElem.innerHTML = copyToClipboardText;
+                        copyToClipboardElem.style.color = '';
+                    }, 2000);
+                })
+            });
             document.getElementById('estimationForm').style.display = '';
             document.getElementById('storyTitleInput').value = '';
             document.getElementById('logoutBtn').innerText = 'Delete Team and Logout';
