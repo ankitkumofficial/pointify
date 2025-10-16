@@ -52,7 +52,6 @@ io.on('connection', (socket) => {
     if (session.teamId && session.username) {
         const teamData = readDb()[session.teamId];
         if (teamData) {
-            console.log(`${session.username} from ${session.teamId} has connected`);
             addUserInCache(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
             initUser(socket, teamData, usersCache);
@@ -102,13 +101,12 @@ io.on('connection', (socket) => {
         session.teamId = `${userData.teamId}`;
         session.isAdmin = userData.isAdmin;
         session.save(err => {
-            if (err) console.log(err);
+            if (err) console.error(err);
             if (session.isAdmin) {
                 teamData = {admin: session.username, stories: []};
             }
             addUserInCache(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
-            console.log(`${userData.username} has joined ${userData.teamId}`);
             initUser(socket, teamData, usersCache);
             if (session.isAdmin) {
                 teamData.createdAt = Date.now();
@@ -158,7 +156,6 @@ io.on('connection', (socket) => {
                     }
                 });
             });
-            console.log(`${username} has been removed by admin`);
             io.to(teamId).emit('users-update', usersCache[session.teamId]);
         }
     });
@@ -176,7 +173,6 @@ io.on('connection', (socket) => {
                     }
                 });
             });
-            console.log(`${username}'s vote has been removed by admin`);
             io.to(session.teamId).emit('votes-update', storiesWithHiddenVotesInCurrent(session.teamId, teamData));
         }
     });
@@ -204,7 +200,6 @@ io.on('connection', (socket) => {
             socket.emit('alert', 'User is not logged in');
             return;
         }
-        console.log(`${session.username} from ${session.teamId} has logged out`);
         if (session.isAdmin) {
             const teamId = session.teamId;
             saveDb(db => delete db[teamId]); // callback function requires constant teamId
@@ -228,7 +223,6 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         const session = socket.request.session;
         if (session.username || session.teamId) {
-            console.log(`${session.username} from ${session.teamId} has disconnected`);
             removeUser(session, usersCache);
             io.to(session.teamId).emit('users-update', usersCache[session.teamId]);
         }
@@ -243,18 +237,16 @@ app.get('/health', (req, res) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.info(`Server running at http://localhost:${PORT}`);
 });
 
 setInterval(() => {
-    console.log("Cleanup initiated");
     saveDb(db => {
         const now = Date.now();
         for (let teamId of Object.keys(db)) {
             if ((now - db[teamId].createdAt) > CUTOFF_MILLIS) {
                 delete db[teamId];
-                console.log('System has removed the expired team', teamId);
             }
         }
-    }).then(() => console.log("Cleanup completed"));
+    }).then(() => console.info("Cleanup completed"));
 }, INTERVAL_MILLIS);

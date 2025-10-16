@@ -74,7 +74,7 @@ export const removeSession = (socket, message) => {
     delete socket.request.session.teamId;
     delete socket.request.session.isAdmin;
     socket.request.session.save(err => {
-        if (err) console.log(err);
+        if (err) console.error(err);
         socket.emit('refresh', message);
     });
 };
