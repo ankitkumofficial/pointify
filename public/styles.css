@@ -25,6 +25,7 @@ input, textarea, select {
     position: relative;
     width: 100%;
     max-width: 48rem;
+    min-height: calc(100vh - 2.5rem - 2.5rem);
     margin: 1.25rem auto;
     padding: 2.25rem;
     border-radius: 1.25rem;
@@ -366,6 +367,25 @@ ul li {
     transform: translateY(-1px);
     box-shadow: 0 6px 12px rgba(0, 122, 255, 0.18);
     background: rgba(0, 122, 255, 0.18);
+}
+
+footer {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    width: 100%;
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.footer-link {
+    color: #007aff;
+    text-decoration: none;
+    transition: color 0.25s ease, transform 0.15s ease;
+}
+
+.footer-link:hover {
+    color: #005fcc;
 }
 
 /* ====== Accessibility ====== */
