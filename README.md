@@ -9,9 +9,11 @@
 **Pointify** streamlines agile story estimation for teams. The **admin** creates a team — the system generates a unique **Team ID**, which other members can use to join.
 During estimation, everyone votes privately in real time. Once all votes are in, the **admin** can reveal the results — showing each member’s vote, the **average score**, and a **recommended Fibonacci value**.
 
-**Admins** have full control: they can **remove users**, **clear votes**, or **delete the team** when the session is over.
+**Admins** have full control: they can **remove users**, **clear votes**, or **delete the team** when the estimation is over.
 
 🔒 **Privacy-first:** No data is stored permanently. All data is automatically deleted after **3 hours** or as soon as the admin deletes the team.
+
+🌐 **Live Production Site:** Access the official running application at [https://pointify-6vin.onrender.com](https://pointify-6vin.onrender.com/)
 
 No fluff. No clutter. Just fast, collaborative estimation that actually works.
 
